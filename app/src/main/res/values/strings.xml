@@ -127,4 +127,16 @@
     <string name="change_keyboard">Change keyboard</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="license">License</string>
+
+    <!-- Madura Smart AI Strings -->
+    <string-array name="madura_dialects">
+        <item>Madura Barat (Bangkalan/Sampang)</item>
+        <item>Madura Tengah (Pamekasan)</item>
+        <item>Madura Timur (Sumenep)</item>
+    </string-array>
+    <string-array name="madura_dialect_values">
+        <item>barat</item>
+        <item>tengah</item>
+        <item>timur</item>
+    </string-array>
 </resources>

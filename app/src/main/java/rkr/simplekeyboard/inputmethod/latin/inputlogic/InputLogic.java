@@ -298,6 +298,9 @@ public final class InputLogic {
      * @param inputTransaction The transaction in progress.
      */
     private void handleSeparatorEvent(final Event event, final InputTransaction inputTransaction) {
+        if (event.mCodePoint == Constants.CODE_SPACE) {
+            mLatinIME.performAutoCorrection();
+        }
         sendKeyCodePoint(event.mCodePoint);
 
         inputTransaction.requireShiftUpdate(InputTransaction.SHIFT_UPDATE_NOW);

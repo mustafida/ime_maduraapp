@@ -28,6 +28,40 @@
         android:fragment="rkr.simplekeyboard.inputmethod.latin.settings.AppearanceSettingsFragment"
         android:title="@string/settings_screen_appearance"
         android:key="screen_appearance" />
+    <PreferenceCategory
+        android:title="Madura Smart Engine (AI)">
+        <PreferenceScreen
+            android:title="Madura AI Configuration"
+            android:summary="HMM Predictor, Auto-Correction, and Dialects"
+            android:key="screen_madura_ai">
+            
+            <CheckBoxPreference
+                android:key="madura_ai_enabled"
+                android:title="AI Word Prediction"
+                android:summary="Enable Hybrid HMM &amp; fastText engine"
+                android:defaultValue="true" />
+                
+            <CheckBoxPreference
+                android:key="madura_v2_autocorrect"
+                android:title="Auto-Correction"
+                android:summary="Automatically correct Madura typos"
+                android:defaultValue="true" />
+                
+            <ListPreference
+                android:key="madura_dialect"
+                android:title="Dialect Optimization"
+                android:summary="Optimize suggestions for specific dialect"
+                android:entries="@array/madura_dialects"
+                android:entryValues="@array/madura_dialect_values"
+                android:defaultValue="barat" />
+
+            <Preference
+                android:title="AI Statistics"
+                android:summary="View how many words have been corrected"
+                android:key="madura_stats" />
+
+        </PreferenceScreen>
+    </PreferenceCategory>
     <Preference
         android:title="@string/privacy_policy"
         android:key="privacy_policy" />

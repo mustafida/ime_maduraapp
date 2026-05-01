@@ -20,6 +20,7 @@
  */
 
 package rkr.simplekeyboard.inputmethod.latin;
+import rkr.simplekeyboard.inputmethod.R;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -76,7 +77,7 @@ import rkr.simplekeyboard.inputmethod.latin.utils.ViewLayoutUtils;
  * Input method implementation for Qwerty'ish keyboard.
  */
 public class LatinIME extends InputMethodService implements KeyboardActionListener,
-        RichInputMethodManager.SubtypeChangedListener {
+        SuggestionStripView.Listener, RichInputMethodManager.SubtypeChangedListener {
     static final String TAG = LatinIME.class.getSimpleName();
     private static final boolean TRACE = false;
 
@@ -91,9 +92,11 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
 
     // TODO: Move these {@link View}s to {@link KeyboardSwitcher}.
     private View mInputView;
+    private SuggestionStripView mSuggestionStripView;
 
     private RichInputMethodManager mRichImm;
     final KeyboardSwitcher mKeyboardSwitcher;
+    private MaduraSuggest mMaduraSuggest;
 
     private AlertDialog mOptionsDialog;
 
@@ -258,6 +261,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         mRichImm.setSubtypeChangeHandler(this);
         KeyboardSwitcher.init(this);
         AudioAndHapticFeedbackManager.init(this);
+        mMaduraSuggest = new MaduraSuggest(this);
         super.onCreate();
 
         // TODO: Resolve mutual dependencies of {@link #loadSettings()} and
@@ -327,8 +331,40 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
     public void setInputView(final View view) {
         super.setInputView(view);
         mInputView = view;
+        mSuggestionStripView = view.findViewById(R.id.suggestion_strip_view);
+        if (mSuggestionStripView != null) {
+            mSuggestionStripView.setListener(this);
+        }
         updateSoftInputWindowLayoutParameters();
         view.requestApplyInsets();
+    }
+
+
+    public void performAutoCorrection() {
+        // Use the absolute simplest way to check the setting
+        android.content.SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        if (!prefs.getBoolean("madura_v2_autocorrect", true)) {
+            return;
+        }
+
+        String word = mInputLogic.mConnection.getWordBeforeCursor(mSettings.getCurrent().mSpacingAndPunctuations);
+        if (TextUtils.isEmpty(word)) return;
+
+        java.util.List<String> suggestions = mMaduraSuggest.getSuggestions(word);
+        if (suggestions != null && !suggestions.isEmpty()) {
+            String best = suggestions.get(0);
+            if (!best.equalsIgnoreCase(word)) {
+                // High confidence correction found!
+                mInputLogic.mConnection.deleteTextBeforeCursor(word.length());
+                
+                // Preserve capitalization
+                if (Character.isUpperCase(word.charAt(0))) {
+                    best = Character.toUpperCase(best.charAt(0)) + best.substring(1);
+                }
+                
+                mInputLogic.mConnection.commitText(best, 1);
+            }
+        }
     }
 
     @Override
@@ -511,6 +547,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         mInputLogic.onUpdateSelection(newSelStart, newSelEnd);
         if (isInputViewShown()) {
             mInputLogic.reloadTextCache();
+            updateSuggestions(); // Trigger update on selection change (e.g. after space)
 
             mKeyboardSwitcher.requestUpdatingShiftState(getCurrentAutoCapsState(),
                     getCurrentRecapitalizeState());
@@ -548,7 +585,11 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             outInsets.visibleTopInsets = inputHeight;
             return;
         }
-        final int visibleTopY = inputHeight - visibleKeyboardView.getHeight();
+        int visibleHeight = visibleKeyboardView.getHeight();
+        if (mSuggestionStripView != null && mSuggestionStripView.getVisibility() == View.VISIBLE) {
+            visibleHeight += mSuggestionStripView.getHeight();
+        }
+        final int visibleTopY = inputHeight - visibleHeight;
         // Need to set expanded touchable region only if a keyboard view is being shown.
         if (visibleKeyboardView.isShown()) {
             final int touchLeft = 0;
@@ -798,6 +839,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
      * @param inputTransaction The transaction that has been executed.
      */
     private void updateStateAfterInputTransaction(final InputTransaction inputTransaction) {
+        updateSuggestions();
         switch (inputTransaction.getRequiredShiftUpdate()) {
         case InputTransaction.SHIFT_UPDATE_LATER:
             mHandler.postUpdateShiftState();
@@ -808,6 +850,26 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             break;
         default: // SHIFT_NO_UPDATE
         }
+    }
+
+    private void updateSuggestions() {
+        if (mSuggestionStripView == null || mMaduraSuggest == null) return;
+        
+        String word = mInputLogic.mConnection.getWordBeforeCursor(mSettings.getCurrent().mSpacingAndPunctuations);
+        if (TextUtils.isEmpty(word)) {
+            // Prediksi kata selanjutnya (Next-Word Prediction)
+            String prevWord = mInputLogic.mConnection.getPreviousWord(mSettings.getCurrent().mSpacingAndPunctuations);
+            if (!TextUtils.isEmpty(prevWord)) {
+                java.util.List<String> nextWords = mMaduraSuggest.getNextWordSuggestions(prevWord);
+                mSuggestionStripView.setSuggestions(nextWords);
+            } else {
+                mSuggestionStripView.clear();
+            }
+            return;
+        }
+        
+        java.util.List<String> suggestions = mMaduraSuggest.getSuggestions(word);
+        mSuggestionStripView.setSuggestions(suggestions);
     }
 
     private void hapticAndAudioFeedback(final int code, final int repeatCount) {
@@ -938,5 +1000,27 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
                 window.getInsetsController().setSystemBarsAppearance(0, flag);
             }
         }
+    }
+
+    @Override
+    public void onPickSuggestion(String suggestion) {
+        String word = mInputLogic.mConnection.getWordBeforeCursor(mSettings.getCurrent().mSpacingAndPunctuations);
+        if (!TextUtils.isEmpty(word)) {
+            mInputLogic.mConnection.deleteTextBeforeCursor(word.length());
+        }
+        mInputLogic.mConnection.commitText(suggestion + " ", 1);
+        if (mSuggestionStripView != null) {
+            mSuggestionStripView.clear();
+        }
+    }
+
+    @Override
+    public void onGridClicked() {
+        launchSettings();
+    }
+
+    @Override
+    public void onPaletteClicked() {
+        // Future theme switching
     }
 }

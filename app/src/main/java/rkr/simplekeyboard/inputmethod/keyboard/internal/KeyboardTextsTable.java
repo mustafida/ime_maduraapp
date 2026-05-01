@@ -239,7 +239,7 @@ public final class KeyboardTextsTable {
     /* Default texts */
     private static final String[] TEXTS_DEFAULT = {
         /* morekeys_a ~ */
-        EMPTY, EMPTY, EMPTY, EMPTY,
+        "\u00E2", "\u00F4", "\u00EA", EMPTY,
         /* ~ morekeys_u */
         // Label for "switch to alphabetic" key.
         /* keylabel_to_alpha */ "ABC",
@@ -251,7 +251,7 @@ public final class KeyboardTextsTable {
         /* single_quotes */ "!text/single_lqm_rqm",
         /* keyspec_currency */ "$",
         /* morekeys_y ~ */
-        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+        EMPTY, EMPTY, "\u1E0D", "\u1E6D", "\u1E37", EMPTY,
         /* ~ morekeys_g */
         /* single_angle_quotes */ "!text/single_laqm_raqm",
         /* double_angle_quotes */ "!text/double_laqm_raqm",

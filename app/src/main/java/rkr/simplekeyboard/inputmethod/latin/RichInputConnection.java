@@ -27,6 +27,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
@@ -296,6 +297,46 @@ public final class RichInputConnection {
         final int length = mTextBeforeCursor.length();
         if (length < 1) return Constants.NOT_A_CODE;
         return Character.codePointBefore(mTextBeforeCursor, length);
+    }
+
+    public String getWordBeforeCursor(final SpacingAndPunctuations spacingAndPunctuations) {
+        if (TextUtils.isEmpty(mTextBeforeCursor)) {
+            return "";
+        }
+        int i = mTextBeforeCursor.length();
+        while (i > 0) {
+            int codePoint = Character.codePointBefore(mTextBeforeCursor, i);
+            if (spacingAndPunctuations.isWordSeparator(codePoint)) {
+                break;
+            }
+            i -= Character.charCount(codePoint);
+        }
+        return mTextBeforeCursor.substring(i);
+    }
+
+    public String getPreviousWord(final SpacingAndPunctuations spacingAndPunctuations) {
+        if (TextUtils.isEmpty(mTextBeforeCursor)) {
+            return "";
+        }
+        int i = mTextBeforeCursor.length();
+        // Skip trailing separators (like spaces)
+        while (i > 0) {
+            int codePoint = Character.codePointBefore(mTextBeforeCursor, i);
+            if (!spacingAndPunctuations.isWordSeparator(codePoint)) {
+                break;
+            }
+            i -= Character.charCount(codePoint);
+        }
+        int end = i;
+        // Find start of the word
+        while (i > 0) {
+            int codePoint = Character.codePointBefore(mTextBeforeCursor, i);
+            if (spacingAndPunctuations.isWordSeparator(codePoint)) {
+                break;
+            }
+            i -= Character.charCount(codePoint);
+        }
+        return mTextBeforeCursor.substring(i, end);
     }
 
     public void replaceText(final int startPosition, final int endPosition, CharSequence text) {

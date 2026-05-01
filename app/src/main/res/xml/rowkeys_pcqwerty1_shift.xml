@@ -52,6 +52,14 @@
     <!-- U+00D7: "×" MULTIPLICATION SIGN
          U+00F7: "÷" DIVISION SIGN
          U+221A: "√" SQUARE ROOT -->
+
+    <Key latin:keySpec="â" />
+    <Key latin:keySpec="ê" />
+    <Key latin:keySpec="ô" />
+    <Key latin:keySpec="ḍ" />
+    <Key latin:keySpec="ṭ" />
+    <Key latin:keySpec="ḷ" />
+
     <Key
         latin:keySpec="+"
         latin:additionalMoreKeys="!text/morekeys_plus"
