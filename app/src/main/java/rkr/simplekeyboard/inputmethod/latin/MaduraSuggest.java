@@ -23,7 +23,25 @@ import java.util.Map;
  * 3. Fuzzy matching (Levenshtein) for typo correction.
  */
 public class MaduraSuggest {
-    private final Map<String, Integer> mDictionary = new HashMap<>();
+    private static class WordEntry {
+        final String original;
+        final String lower;
+        final String normalized;
+        final String phonetic;
+        final int frequency;
+        final int specialCount;
+
+        WordEntry(String original, String lower, String normalized, String phonetic, int frequency, int specialCount) {
+            this.original = original;
+            this.lower = lower;
+            this.normalized = normalized;
+            this.phonetic = phonetic;
+            this.frequency = frequency;
+            this.specialCount = specialCount;
+        }
+    }
+
+    private final List<WordEntry> mWordEntries = new ArrayList<>();
 
     public MaduraSuggest(Context context) {
         loadDictionaryFromAssets(context);
@@ -35,14 +53,45 @@ public class MaduraSuggest {
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(context.getAssets().open("basewords.txt"), "UTF-8"))) {
                 String line;
+                Map<String, Integer> tempDict = new HashMap<>();
                 while ((line = reader.readLine()) != null) {
-                    String word = line.strip();
-                    if (!word.isEmpty()) mDictionary.put(word, 1);
+                    // Split by whitespace and punctuation, keeping special characters like â, ê, ô, ḍ, ṭ, ḷ, '
+                    String[] words = line.split("[^\\p{L}âêôḍṭḷ']+");
+                    for (String word : words) {
+                        word = word.trim();
+                        if (!word.isEmpty()) {
+                            tempDict.put(word, tempDict.getOrDefault(word, 0) + 1);
+                        }
+                    }
+                }
+                
+                // Pre-calculate and cache word properties
+                for (Map.Entry<String, Integer> entry : tempDict.entrySet()) {
+                    addWordToEntries(entry.getKey(), entry.getValue());
+                }
+
+                // Add common Madurese particles that might be missing
+                String[] commonParticles = {"la", "ella", "roh", "sè", "è", "bân", "dâri", "dâ", "ma", "be", "ghi'"};
+                for (String p : commonParticles) {
+                    if (!tempDict.containsKey(p)) {
+                        addWordToEntries(p, 100); // Give them a decent frequency
+                    }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void addWordToEntries(String word, int frequency) {
+        mWordEntries.add(new WordEntry(
+            word,
+            word.toLowerCase(),
+            normalize(word),
+            phoneticNormalize(word),
+            frequency,
+            word.length() - normalize(word).length()
+        ));
     }
 
     private String normalize(String s) {
@@ -56,28 +105,67 @@ public class MaduraSuggest {
             .replace("ḷ", "l");
     }
 
+    /**
+     * phoneticNormalize - Collapses similar-sounding consonants and vowels
+     * into groups to handle modern Madura slang/simplification.
+     * Groups: (bh,b,p), (dh,d,ḍ,ṭ,t), (gh,g,k), (jh,j,c)
+     */
+    private String phoneticNormalize(String s) {
+        if (s == null) return "";
+        String normalized = s.toLowerCase()
+            // Nasals and digraphs
+            .replace("ng", "N").replace("ny", "Y")
+            // Consonants (Voiced Aspirated -> Voiceless Slang)
+            .replace("bh", "B").replace("b", "B").replace("p", "B")
+            .replace("dh", "D").replace("ḍ", "D").replace("ṭ", "D").replace("d", "D").replace("t", "D")
+            .replace("gh", "G").replace("g", "G").replace("k", "G")
+            .replace("jh", "J").replace("j", "J").replace("c", "J")
+            .replace("ḷ", "L").replace("l", "L")
+            // Vowels (Slang often swaps â/e/a)
+            .replace("â", "V").replace("ê", "V").replace("e", "V").replace("a", "V")
+            .replace("ô", "O").replace("o", "O")
+            .replace("u", "U").replace("i", "I");
+
+        // Collapse duplicate characters (e.g., "NN" -> "N", "BB" -> "B", "VV" -> "V")
+        // This handles slang that simplifies double consonants like "bhengngis" -> "pengis"
+        StringBuilder collapsed = new StringBuilder();
+        if (normalized.length() > 0) {
+            collapsed.append(normalized.charAt(0));
+            for (int i = 1; i < normalized.length(); i++) {
+                if (normalized.charAt(i) != normalized.charAt(i - 1)) {
+                    collapsed.append(normalized.charAt(i));
+                }
+            }
+        }
+        return collapsed.toString();
+    }
+
     public List<String> getSuggestions(String input) {
         if (input == null || input.isEmpty()) return new ArrayList<>();
 
         List<WordScore> scoredWords = new ArrayList<>();
         String lowerInput = input.toLowerCase();
         String normalizedInput = normalize(input);
+        String phoneticInput = phoneticNormalize(input);
 
-        for (String word : mDictionary.keySet()) {
-            String lowerWord = word.toLowerCase();
-            String normalizedWord = normalize(word);
-            int frequency = mDictionary.getOrDefault(word, 1);
-            int specialCount = word.length() - normalize(word).length();
-
-            if (normalizedWord.equals(normalizedInput)) {
-                // This is the SAME word (with or without accents)
-                // We give a big bonus for special characters (â, ê, etc.)
-                // so that aêng wins over aeng
-                scoredWords.add(new WordScore(word, 2000 + frequency + (specialCount * 500)));
-            } else if (lowerWord.startsWith(lowerInput)) {
-                scoredWords.add(new WordScore(word, 1000 + frequency));
-            } else if (calculateLevenshteinDistance(normalizedInput, normalizedWord) <= 1) {
-                scoredWords.add(new WordScore(word, 500 + frequency));
+        for (WordEntry entry : mWordEntries) {
+            if (entry.normalized.equals(normalizedInput)) {
+                // Exact match (including special characters bonus)
+                scoredWords.add(new WordScore(entry.original, 5000 + entry.frequency + (entry.specialCount * 500)));
+            } else if (entry.phonetic.equals(phoneticInput)) {
+                // SLANG MATCH: e.g., "ocen" matches "ojhân"
+                scoredWords.add(new WordScore(entry.original, 2500 + entry.frequency));
+            } else if (entry.lower.startsWith(lowerInput)) {
+                // Prefix match
+                int score = 1000 + entry.frequency;
+                // Penalty for long words if input is very short (prevents roh -> rohani)
+                if (input.length() <= 3 && entry.original.length() > input.length() + 2) {
+                    score -= 800; 
+                }
+                scoredWords.add(new WordScore(entry.original, score));
+            } else if (input.length() > 3 && calculateLevenshteinDistance(normalizedInput, entry.normalized) <= 1) {
+                // Fuzzy match (only for words longer than 3 chars to avoid chaos)
+                scoredWords.add(new WordScore(entry.original, 500 + entry.frequency));
             }
         }
 
@@ -143,6 +231,40 @@ public class MaduraSuggest {
             }
         }
         return results;
+    }
+
+    /**
+     * getAutoCorrection - Similar to getSuggestions but only returns
+     * a result if it's a high-confidence match (Exact or Phonetic/Slang).
+     */
+    public String getAutoCorrection(String input) {
+        if (input == null || input.isEmpty()) return null;
+
+        String lowerInput = input.toLowerCase();
+        String normalizedInput = normalize(input);
+        String phoneticInput = phoneticNormalize(input);
+
+        WordEntry bestEntry = null;
+        int bestScore = -1;
+
+        for (WordEntry entry : mWordEntries) {
+            int score = -1;
+            if (entry.normalized.equals(normalizedInput)) {
+                score = 5000 + entry.frequency + (entry.specialCount * 500);
+            } else if (entry.phonetic.equals(phoneticInput)) {
+                score = 2500 + entry.frequency;
+            }
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestEntry = entry;
+            }
+        }
+
+        if (bestEntry != null && !bestEntry.original.equalsIgnoreCase(input)) {
+            return bestEntry.original;
+        }
+        return null;
     }
 
     private static class WordScore {

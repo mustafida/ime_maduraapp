@@ -29,35 +29,27 @@
         android:title="@string/settings_screen_appearance"
         android:key="screen_appearance" />
     <PreferenceCategory
-        android:title="Madura Smart Engine (AI)">
+        android:title="@string/madura_ai_category">
         <PreferenceScreen
-            android:title="Madura AI Configuration"
-            android:summary="HMM Predictor, Auto-Correction, and Dialects"
+            android:title="@string/madura_ai_config"
+            android:summary="@string/madura_ai_summary"
             android:key="screen_madura_ai">
             
             <CheckBoxPreference
                 android:key="madura_ai_enabled"
-                android:title="AI Word Prediction"
-                android:summary="Enable Hybrid HMM &amp; fastText engine"
+                android:title="@string/madura_ai_word_pred"
+                android:summary="@string/madura_ai_word_pred_summary"
                 android:defaultValue="true" />
                 
             <CheckBoxPreference
                 android:key="madura_v2_autocorrect"
-                android:title="Auto-Correction"
-                android:summary="Automatically correct Madura typos"
+                android:title="@string/madura_ai_autocorrect"
+                android:summary="@string/madura_ai_autocorrect_summary"
                 android:defaultValue="true" />
-                
-            <ListPreference
-                android:key="madura_dialect"
-                android:title="Dialect Optimization"
-                android:summary="Optimize suggestions for specific dialect"
-                android:entries="@array/madura_dialects"
-                android:entryValues="@array/madura_dialect_values"
-                android:defaultValue="barat" />
 
             <Preference
-                android:title="AI Statistics"
-                android:summary="View how many words have been corrected"
+                android:title="@string/madura_ai_stats"
+                android:summary="@string/madura_ai_stats_summary"
                 android:key="madura_stats" />
 
         </PreferenceScreen>

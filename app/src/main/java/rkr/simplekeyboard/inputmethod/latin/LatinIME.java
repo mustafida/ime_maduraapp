@@ -350,20 +350,17 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         String word = mInputLogic.mConnection.getWordBeforeCursor(mSettings.getCurrent().mSpacingAndPunctuations);
         if (TextUtils.isEmpty(word)) return;
 
-        java.util.List<String> suggestions = mMaduraSuggest.getSuggestions(word);
-        if (suggestions != null && !suggestions.isEmpty()) {
-            String best = suggestions.get(0);
-            if (!best.equalsIgnoreCase(word)) {
-                // High confidence correction found!
-                mInputLogic.mConnection.deleteTextBeforeCursor(word.length());
-                
-                // Preserve capitalization
-                if (Character.isUpperCase(word.charAt(0))) {
-                    best = Character.toUpperCase(best.charAt(0)) + best.substring(1);
-                }
-                
-                mInputLogic.mConnection.commitText(best, 1);
+        String best = mMaduraSuggest.getAutoCorrection(word);
+        if (!TextUtils.isEmpty(best)) {
+            // High confidence correction found!
+            mInputLogic.mConnection.deleteTextBeforeCursor(word.length());
+            
+            // Preserve capitalization
+            if (Character.isUpperCase(word.charAt(0))) {
+                best = Character.toUpperCase(best.charAt(0)) + best.substring(1);
             }
+            
+            mInputLogic.mConnection.commitText(best, 1);
         }
     }
 

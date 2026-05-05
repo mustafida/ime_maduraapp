@@ -19,22 +19,22 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- Option to provide vibrate/haptic feedback on keypress -->
-    <string name="vibrate_on_keypress">Vibrate on keypress</string>
+    <string name="vibrate_on_keypress">Getar saat menekan tombol</string>
 
     <!-- Option to play back sound on keypress in soft keyboard -->
-    <string name="sound_on_keypress">Sound on keypress</string>
+    <string name="sound_on_keypress">Suara saat menekan tombol</string>
 
     <!-- Option to control whether or not to show a popup with a larger font on each key press. -->
-    <string name="popup_on_keypress">Popup on keypress</string>
+    <string name="popup_on_keypress">Munculan saat menekan tombol</string>
 
     <!-- Settings screen title for preferences [CHAR LIMIT=33]-->
-    <string name="settings_screen_preferences">Preferences</string>
+    <string name="settings_screen_preferences">Preferensi</string>
     <!-- Settings screen title for key press preferences [CHAR LIMIT=33]-->
-    <string name="settings_screen_key_press">Key press</string>
+    <string name="settings_screen_key_press">Tekanan Tombol</string>
     <!-- Settings screen title for appearance preferences [CHAR LIMIT=33] -->
-    <string name="settings_screen_appearance">Appearance</string>
+    <string name="settings_screen_appearance">Tampilan</string>
     <!-- Settings screen title for keyboard theme settings [CHAR LIMIT=33] -->
-    <string name="settings_screen_theme">Theme</string>
+    <string name="settings_screen_theme">Tema</string>
 
     <!-- Units abbreviation for the duration (milliseconds) [CHAR LIMIT=10] -->
     <string name="abbreviation_unit_milliseconds"><xliff:g id="MILLISECONDS">%s</xliff:g>ms</string>
@@ -42,12 +42,12 @@
     <string name="settings_system_default">System default</string>
 
     <!-- Option to enable auto capitalization of sentences -->
-    <string name="auto_cap">Auto-capitalization</string>
+    <string name="auto_cap">Kapitalisasi Otomatis</string>
     <!-- Description for option to enable auto capitalization of sentences -->
-    <string name="auto_cap_summary">Capitalize the first word of each sentence</string>
+    <string name="auto_cap_summary">Gunakan huruf besar di awal setiap kalimat</string>
 
     <!-- Preference for input language selection -->
-    <string name="select_language">Languages</string>
+    <string name="select_language">Bahasa</string>
     <string name="select_language_description" translatable="false">en_US:qwerty;en_US:qwertz;de:qwertz</string>
     <string name="pref_keyboard_color_description" translatable="false">#ECEFF1</string>
 
@@ -92,51 +92,50 @@
     <string name="keyboard_theme_system_border" translatable="false">System Default Border</string>
 
     <!-- Title of the button to add a language in the settings dialog [CHAR LIMIT=15] -->
-    <string name="add">Add</string>
+    <string name="add">Tambah</string>
     <!-- Title of the button to remove a language in the settings dialog [CHAR LIMIT=15] -->
-    <string name="remove">Remove</string>
+    <string name="remove">Hapus</string>
 
     <!-- Title of the settings for keypress vibration duration [CHAR LIMIT=35] -->
     <!-- Title of the settings for keypress sound volume [CHAR LIMIT=35] -->
-    <string name="prefs_keypress_sound_volume_settings">Keypress sound volume</string>
+    <string name="prefs_keypress_sound_volume_settings">Volume suara tombol</string>
     <!-- Title of the settings for key long press delay [CHAR LIMIT=35] -->
-    <string name="prefs_key_longpress_timeout_settings">Key long press delay</string>
+    <string name="prefs_key_longpress_timeout_settings">Penundaan tombol ditekan lama</string>
 
     <!-- Title of the button to revert to the default value of the device in the settings dialog [CHAR LIMIT=15] -->
-    <string name="button_default">Default</string>
+    <string name="button_default">Bawaan</string>
 
     <string translatable="false" name="abbreviation_unit_percent"><xliff:g id="PERCENTS">%s</xliff:g>%%</string>
     <string translatable="false" name="abbreviation_unit_dp"><xliff:g id="DENSITY_INDEPENDENT_PIXELS">%d</xliff:g> dp</string>
 
-    <string name="prefs_keyboard_height_settings">Keyboard height</string>
-    <string name="prefs_bottom_offset_portrait_settings">Bottom offset</string>
-    <string name="keyboard_color">Set custom keyboard color</string>
-    <string name="show_special_chars">Show special characters</string>
-    <string name="show_language_switch_key">Show language switch key</string>
-    <string name="pref_use_on_screen">Show on-screen keyboard</string>
-    <string name="pref_use_on_screen_summary">Show on-screen keyboard while using physical keyboard</string>
-    <string name="pref_enable_ime_switch">Switch to other keyboards</string>
-    <string name="show_number_row">Show separate number row</string>
-    <string name="space_swipe">Space swipe cursor move</string>
-    <string name="delete_swipe">Delete swipe</string>
-    <string name="setup_message">Simple Keyboard is not enabled. Click OK to open Languages &amp; Input settings. You will need to select Simple Keyboard in your current keyboard to use it.</string>
-    <string name="user_languages">Enabled keyboard languages</string>
-    <string name="add_language">Add language</string>
-    <string name="remove_language">Remove language</string>
-    <string name="generic_language_layouts"><xliff:g id="LANGUAGE_NAME" example="English (US)">%s</xliff:g> keyboard layouts</string>
-    <string name="change_keyboard">Change keyboard</string>
-    <string name="privacy_policy">Privacy Policy</string>
-    <string name="license">License</string>
+    <string name="prefs_keyboard_height_settings">Tinggi keyboard</string>
+    <string name="prefs_bottom_offset_portrait_settings">Margin bawah</string>
+    <string name="keyboard_color">Atur warna keyboard kustom</string>
+    <string name="show_special_chars">Tampilkan karakter khusus</string>
+    <string name="show_language_switch_key">Tampilkan tombol ganti bahasa</string>
+    <string name="pref_use_on_screen">Tampilkan keyboard di layar</string>
+    <string name="pref_use_on_screen_summary">Tampilkan keyboard di layar saat menggunakan keyboard fisik</string>
+    <string name="pref_enable_ime_switch">Ganti ke keyboard lain</string>
+    <string name="show_number_row">Tampilkan baris angka</string>
+    <string name="space_swipe">Geser spasi untuk pindah kursor</string>
+    <string name="delete_swipe">Geser hapus</string>
+    <string name="setup_message">Keyboard Madura belum diaktifkan. Klik OK untuk membuka pengaturan Bahasa &amp; Masukan. Kamu perlu memilih Keyboard Madura di daftar keyboard untuk menggunakannya.</string>
+    <string name="user_languages">Bahasa keyboard aktif</string>
+    <string name="add_language">Tambah bahasa</string>
+    <string name="remove_language">Hapus bahasa</string>
+    <string name="generic_language_layouts">Tata letak keyboard %s</string>
+    <string name="change_keyboard">Ganti keyboard</string>
+    <string name="privacy_policy">Kebijakan Privasi</string>
+    <string name="license">Lisensi</string>
 
     <!-- Madura Smart AI Strings -->
-    <string-array name="madura_dialects">
-        <item>Madura Barat (Bangkalan/Sampang)</item>
-        <item>Madura Tengah (Pamekasan)</item>
-        <item>Madura Timur (Sumenep)</item>
-    </string-array>
-    <string-array name="madura_dialect_values">
-        <item>barat</item>
-        <item>tengah</item>
-        <item>timur</item>
-    </string-array>
+    <string name="madura_ai_category">Mesin Pintar Madura (AI)</string>
+    <string name="madura_ai_config">Konfigurasi AI Madura</string>
+    <string name="madura_ai_summary">Prediksi HMM dan Koreksi Otomatis</string>
+    <string name="madura_ai_word_pred">Prediksi Kata AI</string>
+    <string name="madura_ai_word_pred_summary">Aktifkan mesin hybrid HMM &amp; fastText</string>
+    <string name="madura_ai_autocorrect">Koreksi Otomatis</string>
+    <string name="madura_ai_autocorrect_summary">Perbaiki kesalahan ketik Madura secara otomatis</string>
+    <string name="madura_ai_stats">Statistik AI</string>
+    <string name="madura_ai_stats_summary">Lihat berapa banyak kata yang telah diperbaiki</string>
 </resources>

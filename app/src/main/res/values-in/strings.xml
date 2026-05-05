@@ -51,8 +51,8 @@
     <string name="show_number_row">Tampilkan tombol angka terpisah</string>
     <string name="space_swipe">Geser untuk menggerakan kursor</string>
     <string name="delete_swipe">Hapus dengan menggeser</string>
-    <string name="setup_message">Simple Keyboard belum diaktifkan. Klik OKE untuk membuka setelan Bahasa &amp; Masukan. Anda perlu memilih Simple Keyboard di dalam setelan keyboard untuk menggunakannya.</string>
-    <string name="user_languages">Bahasa keyboard yang dihidupkan</string>
+    <string name="setup_message">Keyboard Madura belum diaktifkan. Klik OKE untuk membuka setelan Bahasa &amp; Masukan. Anda perlu memilih Keyboard Madura di dalam setelan keyboard untuk menggunakannya.</string>
+    <string name="user_languages">Bahasa keyboard aktif</string>
     <string name="add_language">Tambah bahasa</string>
     <string name="remove_language">Hapus bahasa</string>
     <string name="generic_language_layouts"><xliff:g id="LANGUAGE_NAME">%s</xliff:g> tata letak keyboard</string>
@@ -62,4 +62,15 @@
     <string name="show_language_switch_key">Tampilkan tombol pengalih bahasa</string>
     <string name="pref_use_on_screen">Tampilkan papan ketik di layar</string>
     <string name="show_special_chars">Tampilkan karakter spesial</string>
+
+    <!-- Madura Smart AI Strings -->
+    <string name="madura_ai_category">Mesin Pintar Madura (AI)</string>
+    <string name="madura_ai_config">Konfigurasi AI Madura</string>
+    <string name="madura_ai_summary">Prediksi HMM dan Koreksi Otomatis</string>
+    <string name="madura_ai_word_pred">Prediksi Kata AI</string>
+    <string name="madura_ai_word_pred_summary">Aktifkan mesin hybrid HMM &amp; fastText</string>
+    <string name="madura_ai_autocorrect">Koreksi Otomatis</string>
+    <string name="madura_ai_autocorrect_summary">Perbaiki kesalahan ketik Madura secara otomatis</string>
+    <string name="madura_ai_stats">Statistik AI</string>
+    <string name="madura_ai_stats_summary">Lihat berapa banyak kata yang telah diperbaiki</string>
 </resources>
