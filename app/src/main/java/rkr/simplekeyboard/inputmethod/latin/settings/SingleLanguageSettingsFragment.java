@@ -82,7 +82,7 @@ public final class SingleLanguageSettingsFragment extends PreferenceFragment {
 
         final PreferenceCategory mainCategory = new PreferenceCategory(context);
         final String localeName = LocaleResourceUtils.getLocaleDisplayNameInSystemLocale(locale);
-        mainCategory.setTitle(context.getString(R.string.generic_language_layouts, localeName));
+        mainCategory.setTitle(context.getString(R.stringgit.generic_language_layouts, localeName));
         group.addPreference(mainCategory);
 
         buildSubtypePreferences(locale, group, context);
